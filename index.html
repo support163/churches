@@ -59,6 +59,29 @@ html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFo
 .msg.bot .translation { display: block; margin-top: 6px; font-size: 11px; color: #888; }
 .msg.error { background: #fff1f0; color: #b42318; }
 .typing { align-self: flex-start; font-size: 12px; color: #888; font-style: italic; }
+.comp { background: #fafafb; }
+.comp-tabs { display: flex; border-bottom: 1px solid #ececec; background: #fff; }
+.comp-tab { flex: 1; background: transparent; border: 0; padding: 12px 6px; font-size: 11px; font-weight: 600; color: #8a8a8e; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; border-bottom: 2px solid transparent; }
+.comp-tab .ti { font-size: 16px; }
+.comp-tab.active { color: #1d6cf3; border-bottom-color: #1d6cf3; }
+.comp-tab:hover:not(.active) { color: #1d1d1f; }
+.comp-body { flex: 1; overflow-y: auto; padding: 14px 16px 12px; }
+.comp-context { display: flex; align-items: baseline; gap: 8px; padding: 8px 12px; background: #eef3ff; border: 1px solid #d8e3ff; border-radius: 8px; margin-bottom: 14px; }
+.comp-context-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: #6b87c2; font-weight: 700; }
+.comp-context-ref { font-size: 13px; font-weight: 700; color: #1d6cf3; }
+.comp-section { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6b6b6e; margin: 16px 0 8px; }
+.comp-section em { font-style: normal; color: #1d6cf3; text-transform: none; letter-spacing: 0; }
+.cref { background: #fff; border: 1px solid #ececec; border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+.cref-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.cref-ref { font-size: 12px; font-weight: 700; color: #1d6cf3; }
+.cref-tag { font-size: 10px; color: #888; background: #f3f3f4; padding: 2px 8px; border-radius: 999px; }
+.cref-text { font-size: 12px; line-height: 1.55; color: #1d1d1f; margin: 0; font-family: Georgia, serif; }
+.theme-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.theme-chip { font-size: 11px; background: #fff; border: 1px solid #ececec; color: #1d1d1f; padding: 4px 10px; border-radius: 999px; }
+.ai-suggest { display: flex; flex-direction: column; gap: 6px; }
+.suggest { text-align: left; background: #fff; border: 1px solid #ececec; color: #1d1d1f; font-size: 12px; padding: 10px 12px; border-radius: 8px; cursor: pointer; }
+.suggest:hover { background: #eef3ff; border-color: #d8e3ff; color: #1d6cf3; }
+.comp-input { padding: 10px 14px 12px; border-top: 1px solid #ececec; background: #fff; }
 .yv { background: #fff; font-family: Georgia, "Iowan Old Style", "Times New Roman", serif; }
 .yv-topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid #ececec; background: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 .yv-icon { background: transparent; border: 0; font-size: 18px; color: #1d1d1f; cursor: pointer; padding: 4px 8px; }
@@ -135,31 +158,69 @@ html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFo
           <div class="panel-foot">Agent by <span class="brand">A2V2.ai</span></div>
         </article>
 
-        <!-- Real Estate Agent (decorative) -->
-        <article class="panel" aria-label="Real Estate Agent">
-          <div class="panel-head">
-            <button class="menu" aria-label="menu">≡</button>
-            <div class="avatar"></div>
-            <div class="panel-title">
-              <div class="title">Real Estate Agent</div>
-              <div class="subtitle">Ready to help you 24/7 with instant information.</div>
+        <!-- Companion: tabbed forum / notes / AI connection -->
+        <article class="panel comp" aria-label="Companion">
+          <div class="comp-tabs">
+            <button class="comp-tab"><span class="ti">💬</span><span>Forum</span></button>
+            <button class="comp-tab"><span class="ti">📝</span><span>Notes</span></button>
+            <button class="comp-tab active"><span class="ti">✨</span><span>AI Connection</span></button>
+          </div>
+
+          <div class="comp-body">
+            <div class="comp-context">
+              <div class="comp-context-label">Reading</div>
+              <div class="comp-context-ref">John 3 · WEB</div>
+            </div>
+
+            <h3 class="comp-section">Cross-references for <em>John 3:16</em></h3>
+
+            <div class="cref">
+              <div class="cref-head">
+                <span class="cref-ref">Romans 5:8</span>
+                <span class="cref-tag">God's love</span>
+              </div>
+              <p class="cref-text">But God commends his own love toward us, in that while we were yet sinners, Christ died for us.</p>
+            </div>
+
+            <div class="cref">
+              <div class="cref-head">
+                <span class="cref-ref">1 John 4:9-10</span>
+                <span class="cref-tag">Sacrifice</span>
+              </div>
+              <p class="cref-text">By this God's love was revealed in us, that God has sent his one and only Son into the world that we might live through him.</p>
+            </div>
+
+            <div class="cref">
+              <div class="cref-head">
+                <span class="cref-ref">Ephesians 2:4-5</span>
+                <span class="cref-tag">Mercy</span>
+              </div>
+              <p class="cref-text">But God, being rich in mercy, for his great love with which he loved us, even when we were dead through our trespasses, made us alive together with Christ.</p>
+            </div>
+
+            <h3 class="comp-section">Themes</h3>
+            <div class="theme-chips">
+              <span class="theme-chip">God's Love</span>
+              <span class="theme-chip">Eternal Life</span>
+              <span class="theme-chip">Salvation</span>
+              <span class="theme-chip">Belief</span>
+              <span class="theme-chip">Sacrifice</span>
+            </div>
+
+            <h3 class="comp-section">Ask about this passage</h3>
+            <div class="ai-suggest">
+              <button class="suggest">What does &ldquo;born again&rdquo; mean here?</button>
+              <button class="suggest">How does this connect to Old Testament prophecy?</button>
+              <button class="suggest">Explain John 3:16 in plain language</button>
             </div>
           </div>
-          <div class="panel-body welcome">
-            <div class="avatar large"></div>
-            <h2>Hi, I'm Sandesh AI Assistant 👋</h2>
-            <p>Ask me about property advice, investment tips, or<br />any of your real estate related questions.</p>
-          </div>
-          <div class="panel-input">
+
+          <div class="comp-input">
             <div class="input-row">
-              <input type="text" placeholder="Ask a Question" disabled />
-              <button class="send" aria-label="send" disabled>➤</button>
-            </div>
-            <div class="input-tools">
-              <span>🔗</span><span>☺</span><span>🎤</span>
+              <input type="text" placeholder="Ask the AI about this passage…" />
+              <button class="send" type="button" aria-label="send">➤</button>
             </div>
           </div>
-          <div class="panel-foot">Agent by <span class="brand">A2V2.ai</span></div>
         </article>
 
         <!-- YouVersion-style Bible reader -->

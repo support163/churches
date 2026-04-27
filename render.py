@@ -141,27 +141,147 @@ def draw_foot(px, text, brand):
     d.text((fx + (bb2[2] - bb2[0]), fy), brand, fill=(85, 85, 85), font=f(11, bold=True))
 
 
-# Panel 1 & 2: Real Estate Agent (welcome state)
-for i in range(2):
-    px = panel_x[i]
-    draw_panel_head(px, "Real Estate Agent", "Ready to help you 24/7 with instant information.")
-    cx = px + PW // 2
-    cy_av = PANEL_TOP + 230
-    draw_avatar(cx, cy_av, 28)
-    # Heading
-    title = "Hi, I'm Sandesh AI Assistant"
-    bb = d.textbbox((0, 0), title, font=f(15, bold=True))
-    d.text((cx - (bb[2] - bb[0]) // 2, cy_av + 50), title, fill=TEXT, font=f(15, bold=True))
-    # wave emoji-ish
-    d.text((cx + (bb[2] - bb[0]) // 2 + 6, cy_av + 48), "👋", fill=TEXT, font=f(16))
-    # subtitle
-    line1 = "Ask me about property advice, investment tips, or"
-    line2 = "any of your real estate related questions."
-    for j, ln in enumerate([line1, line2]):
-        bb = d.textbbox((0, 0), ln, font=f(12))
-        d.text((cx - (bb[2] - bb[0]) // 2, cy_av + 80 + j * 18), ln, fill=MUTED, font=f(12))
-    draw_input(px, "Ask a Question")
-    draw_foot(px, "Agent by", "A2V2.ai")
+# Panel 1: Real Estate Agent (welcome state)
+px = panel_x[0]
+draw_panel_head(px, "Real Estate Agent", "Ready to help you 24/7 with instant information.")
+cx = px + PW // 2
+cy_av = PANEL_TOP + 230
+draw_avatar(cx, cy_av, 28)
+title = "Hi, I'm Sandesh AI Assistant"
+bb = d.textbbox((0, 0), title, font=f(15, bold=True))
+d.text((cx - (bb[2] - bb[0]) // 2, cy_av + 50), title, fill=TEXT, font=f(15, bold=True))
+d.text((cx + (bb[2] - bb[0]) // 2 + 6, cy_av + 48), "👋", fill=TEXT, font=f(16))
+for j, ln in enumerate([
+    "Ask me about property advice, investment tips, or",
+    "any of your real estate related questions.",
+]):
+    bb = d.textbbox((0, 0), ln, font=f(12))
+    d.text((cx - (bb[2] - bb[0]) // 2, cy_av + 80 + j * 18), ln, fill=MUTED, font=f(12))
+draw_input(px, "Ask a Question")
+draw_foot(px, "Agent by", "A2V2.ai")
+
+# Panel 2: Companion with tabs (Forum / Notes / AI Connection — AI Connection active)
+px = panel_x[1]
+# Background tint for whole panel
+d.rectangle((px, PANEL_TOP, px + PW, PANEL_BOTTOM), fill=(250, 250, 251))
+
+# Tab bar
+TAB_H = 56
+d.rectangle((px, PANEL_TOP, px + PW, PANEL_TOP + TAB_H), fill=WHITE)
+d.line((px, PANEL_TOP + TAB_H, px + PW, PANEL_TOP + TAB_H), fill=LIGHT, width=1)
+tabs = [("Forum", False), ("Notes", False), ("AI Connection", True)]
+tab_w = PW // 3
+for i, (label, active) in enumerate(tabs):
+    tx = px + i * tab_w
+    color = BLUE if active else (138, 138, 142)
+    weight_font = f(11, bold=True)
+    bb = d.textbbox((0, 0), label, font=weight_font)
+    d.text((tx + tab_w // 2 - (bb[2] - bb[0]) // 2, PANEL_TOP + 30), label, fill=color, font=weight_font)
+    # icon dot above
+    icon_color = BLUE if active else (170, 170, 175)
+    d.ellipse((tx + tab_w // 2 - 4, PANEL_TOP + 14, tx + tab_w // 2 + 4, PANEL_TOP + 22), fill=icon_color)
+    if active:
+        d.rectangle((tx + 12, PANEL_TOP + TAB_H - 2, tx + tab_w - 12, PANEL_TOP + TAB_H), fill=BLUE)
+
+# Body content
+cy = PANEL_TOP + TAB_H + 14
+left_pad = px + 18
+right_pad = px + PW - 18
+body_w = PW - 36
+
+# Reading context card
+ctx_h = 38
+d.rounded_rectangle((left_pad, cy, right_pad, cy + ctx_h), 8, fill=(238, 243, 255), outline=(216, 227, 255), width=1)
+d.text((left_pad + 12, cy + 7), "READING", fill=(107, 135, 194), font=f(9, bold=True))
+d.text((left_pad + 12, cy + 19), "John 3 · WEB", fill=BLUE, font=f(13, bold=True))
+cy += ctx_h + 14
+
+# Section: Cross-references for John 3:16
+d.text((left_pad, cy), "CROSS-REFERENCES FOR ", fill=(107, 107, 110), font=f(10, bold=True))
+xx = left_pad + d.textbbox((0, 0), "CROSS-REFERENCES FOR ", font=f(10, bold=True))[2]
+d.text((xx, cy - 1), "John 3:16", fill=BLUE, font=f(11, bold=True))
+cy += 18
+
+
+def cref_card(ref, tag, text):
+    global cy
+    ft_text = f(11)
+    # wrap text
+    words = text.split(" ")
+    lines = []
+    cur = ""
+    max_w = body_w - 24
+    for w in words:
+        test = (cur + " " + w).strip()
+        if d.textbbox((0, 0), test, font=ft_text)[2] <= max_w:
+            cur = test
+        else:
+            lines.append(cur)
+            cur = w
+    if cur:
+        lines.append(cur)
+    h = 14 + 18 + len(lines) * 16 + 6
+    d.rounded_rectangle((left_pad, cy, right_pad, cy + h), 10, fill=WHITE, outline=LIGHT, width=1)
+    d.text((left_pad + 12, cy + 8), ref, fill=BLUE, font=f(11, bold=True))
+    # tag pill on right
+    bb = d.textbbox((0, 0), tag, font=f(9))
+    tag_w = bb[2] - bb[0] + 14
+    tx = right_pad - 12 - tag_w
+    d.rounded_rectangle((tx, cy + 7, tx + tag_w, cy + 22), 8, fill=(243, 243, 244))
+    d.text((tx + 7, cy + 9), tag, fill=(120, 120, 122), font=f(9))
+    yy = cy + 28
+    for ln in lines:
+        d.text((left_pad + 12, yy), ln, fill=TEXT, font=ft_text)
+        yy += 16
+    cy += h + 6
+
+
+cref_card("Romans 5:8", "God's love", "But God commends his own love toward us, in that while we were yet sinners, Christ died for us.")
+cref_card("1 John 4:9-10", "Sacrifice", "By this God's love was revealed in us, that God has sent his one and only Son into the world that we might live through him.")
+cref_card("Ephesians 2:4-5", "Mercy", "But God, being rich in mercy, for his great love with which he loved us, made us alive together with Christ.")
+
+# Themes section
+cy += 8
+d.text((left_pad, cy), "THEMES", fill=(107, 107, 110), font=f(10, bold=True))
+cy += 18
+themes = ["God's Love", "Eternal Life", "Salvation", "Belief", "Sacrifice"]
+tx = left_pad
+ft_th = f(10)
+for t in themes:
+    bb = d.textbbox((0, 0), t, font=ft_th)
+    cw = bb[2] - bb[0] + 18
+    if tx + cw > right_pad:
+        tx = left_pad
+        cy += 24
+    d.rounded_rectangle((tx, cy, tx + cw, cy + 20), 10, fill=WHITE, outline=LIGHT, width=1)
+    d.text((tx + 9, cy + 4), t, fill=TEXT, font=ft_th)
+    tx += cw + 5
+cy += 28
+
+# Suggestions section
+d.text((left_pad, cy), "ASK ABOUT THIS PASSAGE", fill=(107, 107, 110), font=f(10, bold=True))
+cy += 18
+suggestions = [
+    "What does “born again” mean here?",
+    "How does this connect to OT prophecy?",
+    "Explain John 3:16 in plain language",
+]
+ft_s = f(11)
+for s in suggestions:
+    h = 30
+    d.rounded_rectangle((left_pad, cy, right_pad, cy + h), 8, fill=WHITE, outline=LIGHT, width=1)
+    d.text((left_pad + 12, cy + 9), s, fill=TEXT, font=ft_s)
+    cy += h + 6
+
+# Bottom input
+ib_h = 60
+ib_y = PANEL_BOTTOM - ib_h
+d.rectangle((px, ib_y, px + PW, PANEL_BOTTOM), fill=WHITE)
+d.line((px, ib_y, px + PW, ib_y), fill=LIGHT, width=1)
+inp_y = ib_y + 14
+d.rounded_rectangle((left_pad, inp_y, right_pad, inp_y + 32), 8, outline=(229, 229, 229), width=1)
+d.text((left_pad + 12, inp_y + 8), "Ask the AI about this passage…", fill=(180, 180, 180), font=f(12))
+d.text((right_pad - 22, inp_y + 8), "➤", fill=BLUE, font=f(13))
 
 # Panel 3: YouVersion-style Bible reader
 px = panel_x[2]
