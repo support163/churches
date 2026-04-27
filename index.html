@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Church</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="app-header">Church</header>
+
+    <main class="window">
+      <div class="window-bar">
+        <div class="window-dots">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+        </div>
+        <div class="window-nav">
+          <button aria-label="sidebar" class="icon-btn">▤</button>
+          <button aria-label="back" class="icon-btn">‹</button>
+          <button aria-label="forward" class="icon-btn">›</button>
+        </div>
+        <div class="window-url">
+          <span class="lock">🔒</span>
+          <span class="url-text">A2V2.ai</span>
+          <span class="reload">⟳</span>
+        </div>
+        <div class="window-actions">
+          <button class="icon-btn" aria-label="share">⇪</button>
+          <button class="icon-btn" aria-label="new tab">+</button>
+          <button class="icon-btn" aria-label="tabs">⧉</button>
+        </div>
+      </div>
+
+      <section class="panels">
+        <!-- Real Estate Agent (decorative) -->
+        <article class="panel" aria-label="Real Estate Agent">
+          <div class="panel-head">
+            <button class="menu" aria-label="menu">≡</button>
+            <div class="avatar"></div>
+            <div class="panel-title">
+              <div class="title">Real Estate Agent</div>
+              <div class="subtitle">Ready to help you 24/7 with instant information.</div>
+            </div>
+          </div>
+          <div class="panel-body welcome">
+            <div class="avatar large"></div>
+            <h2>Hi, I'm Sandesh AI Assistant 👋</h2>
+            <p>Ask me about property advice, investment tips, or<br />any of your real estate related questions.</p>
+          </div>
+          <div class="panel-input">
+            <div class="input-row">
+              <input type="text" placeholder="Ask a Question" disabled />
+              <button class="send" aria-label="send" disabled>➤</button>
+            </div>
+            <div class="input-tools">
+              <span>🔗</span><span>☺</span><span>🎤</span>
+            </div>
+          </div>
+          <div class="panel-foot">Agent by <span class="brand">A2V2.ai</span></div>
+        </article>
+
+        <!-- Real Estate Agent (decorative) -->
+        <article class="panel" aria-label="Real Estate Agent">
+          <div class="panel-head">
+            <button class="menu" aria-label="menu">≡</button>
+            <div class="avatar"></div>
+            <div class="panel-title">
+              <div class="title">Real Estate Agent</div>
+              <div class="subtitle">Ready to help you 24/7 with instant information.</div>
+            </div>
+          </div>
+          <div class="panel-body welcome">
+            <div class="avatar large"></div>
+            <h2>Hi, I'm Sandesh AI Assistant 👋</h2>
+            <p>Ask me about property advice, investment tips, or<br />any of your real estate related questions.</p>
+          </div>
+          <div class="panel-input">
+            <div class="input-row">
+              <input type="text" placeholder="Ask a Question" disabled />
+              <button class="send" aria-label="send" disabled>➤</button>
+            </div>
+            <div class="input-tools">
+              <span>🔗</span><span>☺</span><span>🎤</span>
+            </div>
+          </div>
+          <div class="panel-foot">Agent by <span class="brand">A2V2.ai</span></div>
+        </article>
+
+        <!-- Bible reference tool (functional) -->
+        <article class="panel bible" aria-label="Bible Reference Tool">
+          <div class="panel-head">
+            <button class="menu" aria-label="menu">≡</button>
+            <div class="avatar bible-avatar">✝</div>
+            <div class="panel-title">
+              <div class="title">Bible</div>
+              <div class="subtitle">Look up any passage by reference, instantly.</div>
+            </div>
+          </div>
+
+          <div class="panel-body" id="bible-body">
+            <div class="welcome">
+              <div class="avatar large bible-avatar">✝</div>
+              <h2>Hi, I'm your Bible reference tool 📖</h2>
+              <p>Type a reference like <em>John 3:16</em>, <em>Psalm 23</em>,<br />or <em>Genesis 1:1-5</em> to read the passage.</p>
+              <div class="quick-refs">
+                <button class="chip" data-ref="John 3:16">John 3:16</button>
+                <button class="chip" data-ref="Psalm 23">Psalm 23</button>
+                <button class="chip" data-ref="Genesis 1:1-5">Genesis 1:1-5</button>
+                <button class="chip" data-ref="Romans 8:28">Romans 8:28</button>
+                <button class="chip" data-ref="Proverbs 3:5-6">Proverbs 3:5-6</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel-input">
+            <form id="bible-form" class="input-row">
+              <input
+                id="bible-input"
+                type="text"
+                placeholder="Enter a reference (e.g. John 3:16)"
+                autocomplete="off"
+              />
+              <button class="send" type="submit" aria-label="send">➤</button>
+            </form>
+            <div class="input-tools">
+              <span>🔗</span><span>☺</span><span>🎤</span>
+            </div>
+          </div>
+          <div class="panel-foot">Powered by <span class="brand">bible-api.com</span></div>
+        </article>
+      </section>
+    </main>
+
+    <script src="bible.js"></script>
+  </body>
+</html>
