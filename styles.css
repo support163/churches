@@ -265,6 +265,32 @@ body {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
+}
+.msg.bot.intro {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: transparent;
+  padding: 4px 0;
+  font-size: 12px;
+  color: #555;
+  max-width: 100%;
+}
+.msg.bot.intro .avatar {
+  width: 28px;
+  height: 28px;
+  font-size: 13px;
+}
+.msg.bot.intro strong {
+  display: block;
+  color: #1d1d1f;
+  font-size: 13px;
+  margin-bottom: 2px;
+}
+.msg.bot.intro em {
+  color: #1d6cf3;
+  font-style: normal;
 }
 .msg {
   max-width: 86%;
