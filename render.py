@@ -163,21 +163,61 @@ for i in range(2):
     draw_input(px, "Ask a Question")
     draw_foot(px, "Agent by", "A2V2.ai")
 
-# Panel 3: Bible (chat state)
+# Panel 3: YouVersion-style Bible reader
 px = panel_x[2]
-draw_panel_head(px, "Bible", "Look up any passage by reference, instantly.", "✝")
 
-cy = PANEL_TOP + 84
-left_pad = px + 22
-right_pad = px + PW - 22
-chat_w = PW - 44
+# Top bar (replaces panel-head)
+TOP_H = 56
+d.rectangle((px, PANEL_TOP, px + PW, PANEL_TOP + TOP_H), fill=WHITE)
+d.line((px, PANEL_TOP + TOP_H, px + PW, PANEL_TOP + TOP_H), fill=LIGHT, width=1)
 
-# Intro row
-draw_avatar(left_pad + 14, cy + 10, 14, "✝")
-d.text((left_pad + 36, cy), "Hi, I'm your Bible reference tool 📖", fill=TEXT, font=f(13, bold=True))
-intro = "Type a reference like John 3:16 or Psalm 23 and I'll pull up the passage."
-d.text((left_pad + 36, cy + 18), intro, fill=(110, 110, 110), font=f(11))
-cy += 56
+# hamburger
+d.text((px + 16, PANEL_TOP + 18), "≡", fill=(40, 40, 42), font=f(22))
+
+# pickers (centered)
+pick_y = PANEL_TOP + 14
+pick_book_text = "John 3"
+pick_trans_text = "WEB"
+ft_pick = f(12, bold=True)
+bb = d.textbbox((0, 0), pick_book_text, font=ft_pick)
+book_w = bb[2] - bb[0] + 30
+bb = d.textbbox((0, 0), pick_trans_text, font=ft_pick)
+trans_w = bb[2] - bb[0] + 30
+total = book_w + trans_w + 8
+start_x = px + PW // 2 - total // 2
+# book pill (gray)
+d.rounded_rectangle((start_x, pick_y, start_x + book_w, pick_y + 28), 14, fill=(243, 243, 244))
+d.text((start_x + 12, pick_y + 7), pick_book_text, fill=(40, 40, 42), font=ft_pick)
+d.text((start_x + book_w - 16, pick_y + 11), "▾", fill=(140, 140, 140), font=f(9, bold=True))
+# translation pill (orange)
+tx = start_x + book_w + 8
+d.rounded_rectangle((tx, pick_y, tx + trans_w, pick_y + 28), 14, fill=(255, 231, 194))
+d.text((tx + 12, pick_y + 7), pick_trans_text, fill=(255, 122, 0), font=ft_pick)
+d.text((tx + trans_w - 16, pick_y + 11), "▾", fill=(255, 122, 0), font=f(9, bold=True))
+
+# search icon
+d.text((px + PW - 32, PANEL_TOP + 18), "⌕", fill=(40, 40, 42), font=f(20))
+
+# Reader area
+ACTION_H = 50
+reader_top = PANEL_TOP + TOP_H
+reader_bottom = PANEL_BOTTOM - ACTION_H
+left_pad = px + 28
+right_pad = px + PW - 28
+text_w = PW - 56
+
+# CHAPTER label
+ft_lbl = f(10, bold=True)
+lbl = "CHAPTER"
+bb = d.textbbox((0, 0), lbl, font=ft_lbl)
+d.text((px + PW // 2 - (bb[2] - bb[0]) // 2, reader_top + 16), lbl, fill=(176, 176, 179), font=ft_lbl)
+
+# Big chapter number
+ft_num = f(72)
+nbb = d.textbbox((0, 0), "3", font=ft_num)
+d.text((px + PW // 2 - (nbb[2] - nbb[0]) // 2, reader_top + 30), "3", fill=TEXT, font=ft_num)
+
+cy = reader_top + 130
 
 
 def wrap(text, font, max_w):
@@ -197,67 +237,114 @@ def wrap(text, font, max_w):
     return lines
 
 
-def user_bubble(text):
+def section(title):
     global cy
-    ft = f(12)
-    bb = d.textbbox((0, 0), text, font=ft)
-    bw = bb[2] - bb[0] + 24
-    bh = bb[3] - bb[1] + 18
-    bx2 = right_pad
-    bx1 = bx2 - bw
-    d.rounded_rectangle((bx1, cy, bx2, cy + bh), 12, fill=BLUE)
-    d.text((bx1 + 12, cy + 8), text, fill=WHITE, font=ft)
-    cy += bh + 10
+    ft = f(11, bold=True)
+    cy += 6
+    d.text((left_pad, cy), title.upper(), fill=(107, 107, 110), font=ft)
+    cy += 22
 
 
-def bot_bubble(ref, body, translation, verses=False):
+# Render verse paragraph: tokens are (kind, content). We layout in flowing line.
+def render_paragraph(verses, highlight_set=None):
+    """verses: list of (verse_num, text). Optionally highlight a set of verse numbers."""
     global cy
-    ft = f(12)
-    ftref = f(10, bold=True)
-    max_w = int(chat_w * 0.86) - 24
-    lines = wrap(body, ft, max_w)
-    bw = max_w + 24
-    bh = 12 + 18 + len(lines) * 18 + 6 + 16 + 8
-    d.rounded_rectangle((left_pad, cy, left_pad + bw, cy + bh), 12, fill=BUBBLE_BG)
-    d.text((left_pad + 12, cy + 10), ref.upper(), fill=BLUE, font=ftref)
-    yy = cy + 30
-    for ln in lines:
-        d.text((left_pad + 12, yy), ln, fill=TEXT, font=ft)
-        yy += 18
-    d.text((left_pad + 12, yy + 4), "— " + translation, fill=(140, 140, 140), font=f(10))
-    cy += bh + 10
+    if highlight_set is None:
+        highlight_set = set()
+    ft_text = f(13)
+    ft_vn = f(8, bold=True)
+    line_h = 22
+    # tokenize
+    tokens = []
+    for vn, text in verses:
+        tokens.append(("vn", str(vn), vn))
+        for word in text.split(" "):
+            tokens.append(("word", word, vn))
+
+    # layout
+    x = left_pad
+    line_tokens = []  # list of (type, content, vnum, w, x_start)
+
+    def flush_line(last=False):
+        nonlocal x, line_tokens
+        global cy
+        # draw highlight backgrounds first per verse run
+        i = 0
+        while i < len(line_tokens):
+            t, c, vn, w, sx = line_tokens[i]
+            if vn in highlight_set and t == "word":
+                # find run end
+                j = i
+                run_x1 = sx
+                run_x2 = sx + w
+                while j + 1 < len(line_tokens) and line_tokens[j + 1][2] in highlight_set and line_tokens[j + 1][0] == "word":
+                    j += 1
+                    run_x2 = line_tokens[j][4] + line_tokens[j][3]
+                d.rounded_rectangle((run_x1 - 2, cy + 1, run_x2 + 2, cy + line_h - 3), 2, fill=(255, 243, 168))
+                i = j + 1
+            else:
+                i += 1
+        # draw glyphs
+        for t, c, vn, w, sx in line_tokens:
+            if t == "vn":
+                d.text((sx, cy + 1), c, fill=(176, 176, 179), font=ft_vn)
+            else:
+                d.text((sx, cy + 4), c, fill=TEXT, font=ft_text)
+        cy += line_h
+        x = left_pad
+        line_tokens = []
+
+    for tok in tokens:
+        kind, content, vn = tok
+        if kind == "vn":
+            ft = ft_vn
+            extra = " "
+            tw = d.textbbox((0, 0), content, font=ft)[2] + 6
+        else:
+            ft = ft_text
+            tw = d.textbbox((0, 0), content + " ", font=ft)[2]
+        if x + tw > right_pad and line_tokens:
+            flush_line()
+        if kind == "vn":
+            line_tokens.append(("vn", content, vn, tw - 4, x))
+        else:
+            line_tokens.append(("word", content, vn, tw - 4, x))
+        x += tw
+    if line_tokens:
+        flush_line(last=True)
+    cy += 4
 
 
-user_bubble("John 3:16")
-bot_bubble(
-    "John 3:16",
-    "For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life.",
-    "World English Bible",
+# Section 1
+section("Jesus Teaches Nicodemus")
+render_paragraph([
+    (1, "Now there was a man of the Pharisees named Nicodemus, a ruler of the Jews."),
+    (2, "He came to Jesus by night and said to him, “Rabbi, we know that you are a teacher come from God.”"),
+    (3, "Jesus answered him, “Most certainly I tell you, unless one is born anew, he can’t see God’s Kingdom.”"),
+    (4, "Nicodemus said to him, “How can a man be born when he is old?”"),
+])
+
+# Section 2
+section("For God So Loved the World")
+render_paragraph(
+    [
+        (16, "For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life."),
+        (17, "For God didn’t send his Son into the world to judge the world, but that the world should be saved through him."),
+    ],
+    highlight_set={16},
 )
-user_bubble("Psalm 23:1-3")
-bot_bubble(
-    "Psalm 23:1-3",
-    "1 Yahweh is my shepherd: I shall lack nothing. 2 He makes me lie down in green pastures. He leads me beside still waters. 3 He restores my soul.",
-    "World English Bible",
-)
 
-# Quick chips
-chips = ["John 3:16", "Psalm 23", "Genesis 1:1-5", "Romans 8:28"]
-chip_y = cy + 8
-chip_x = left_pad
-ft = f(11)
-for c in chips:
-    bb = d.textbbox((0, 0), c, font=ft)
-    cw = bb[2] - bb[0] + 18
-    if chip_x + cw > right_pad:
-        chip_x = left_pad
-        chip_y += 26
-    d.rounded_rectangle((chip_x, chip_y, chip_x + cw, chip_y + 22), 11, fill=CHIP_BG, outline=CHIP_BD, width=1)
-    d.text((chip_x + 9, chip_y + 4), c, fill=BLUE, font=ft)
-    chip_x += cw + 6
-
-draw_input(px, "Enter a reference (e.g. John 3:16)")
-draw_foot(px, "Powered by", "bible-api.com")
+# Action bar at bottom
+ab_y = reader_bottom
+d.rectangle((px, ab_y, px + PW, ab_y + ACTION_H), fill=WHITE)
+d.line((px, ab_y, px + PW, ab_y), fill=LIGHT, width=1)
+actions = ["▶", "Aa", "🔖", "✎", "↗"]
+slot = PW // len(actions)
+for i, a in enumerate(actions):
+    cx = px + slot * i + slot // 2
+    ft_a = f(13, bold=True) if a == "Aa" else f(15)
+    bb = d.textbbox((0, 0), a, font=ft_a)
+    d.text((cx - (bb[2] - bb[0]) // 2, ab_y + 14), a, fill=(107, 107, 110), font=ft_a)
 
 img.save("/home/user/churches/preview.png")
 print("saved preview.png", img.size)

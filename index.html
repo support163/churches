@@ -59,6 +59,24 @@ html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFo
 .msg.bot .translation { display: block; margin-top: 6px; font-size: 11px; color: #888; }
 .msg.error { background: #fff1f0; color: #b42318; }
 .typing { align-self: flex-start; font-size: 12px; color: #888; font-style: italic; }
+.yv { background: #fff; font-family: Georgia, "Iowan Old Style", "Times New Roman", serif; }
+.yv-topbar { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; border-bottom: 1px solid #ececec; background: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+.yv-icon { background: transparent; border: 0; font-size: 18px; color: #1d1d1f; cursor: pointer; padding: 4px 8px; }
+.yv-pickers { display: flex; gap: 8px; }
+.yv-pick { background: #f3f3f4; border: 0; border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 700; color: #1d1d1f; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+.yv-pick.trans { background: #ffe7c2; color: #ff7a00; }
+.yv-pick .caret { font-size: 9px; opacity: 0.6; }
+.yv-reader { flex: 1; overflow-y: auto; padding: 18px 22px 14px; color: #1d1d1f; }
+.yv-chapter-label { font-family: -apple-system, sans-serif; font-size: 10px; letter-spacing: 0.18em; color: #b0b0b3; text-align: center; margin-top: 6px; }
+.yv-chapter-num { font-family: Georgia, serif; font-size: 64px; font-weight: 400; text-align: center; line-height: 1; margin: 4px 0 18px; color: #1d1d1f; }
+.yv-section { font-family: -apple-system, BlinkMacSystemFont, sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #6b6b6e; margin: 18px 0 8px; }
+.yv-verses { font-family: Georgia, "Iowan Old Style", "Times New Roman", serif; font-size: 15px; line-height: 1.7; color: #1d1d1f; margin: 0; text-align: left; }
+.yv-verses .vn { font-family: -apple-system, sans-serif; font-size: 9px; font-weight: 700; color: #b0b0b3; vertical-align: super; margin: 0 3px 0 4px; letter-spacing: 0.04em; }
+.yv-verses .hl { background: #fff3a8; padding: 1px 2px; border-radius: 2px; }
+.yv-actionbar { display: flex; justify-content: space-around; align-items: center; padding: 10px 8px; border-top: 1px solid #ececec; background: #fff; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+.yv-action { background: transparent; border: 0; font-size: 16px; color: #6b6b6e; cursor: pointer; width: 40px; height: 36px; border-radius: 8px; }
+.yv-action:hover { background: #f5f5f6; }
+.yv-action .aa { font-weight: 700; font-size: 14px; }
 @media (max-width: 900px) { .panels { grid-template-columns: 1fr; } .panel { border-right: 0; border-bottom: 1px solid #ececec; } }
     </style>
   </head>
@@ -144,69 +162,46 @@ html, body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFo
           <div class="panel-foot">Agent by <span class="brand">A2V2.ai</span></div>
         </article>
 
-        <!-- Bible reference tool (functional) -->
-        <article class="panel bible" aria-label="Bible Reference Tool">
-          <div class="panel-head">
-            <button class="menu" aria-label="menu">≡</button>
-            <div class="avatar bible-avatar">✝</div>
-            <div class="panel-title">
-              <div class="title">Bible</div>
-              <div class="subtitle">Look up any passage by reference, instantly.</div>
+        <!-- YouVersion-style Bible reader -->
+        <article class="panel yv" aria-label="Bible Reader">
+          <div class="yv-topbar">
+            <button class="yv-icon" aria-label="menu">≡</button>
+            <div class="yv-pickers">
+              <button class="yv-pick book">John 3 <span class="caret">▾</span></button>
+              <button class="yv-pick trans">WEB <span class="caret">▾</span></button>
             </div>
+            <button class="yv-icon" aria-label="search">⌕</button>
           </div>
 
-          <div class="panel-body" id="bible-body">
-            <div class="messages">
-              <div class="msg bot intro">
-                <div class="avatar bible-avatar">✝</div>
-                <div>
-                  <strong>Hi, I'm your Bible reference tool 📖</strong><br />
-                  Type a reference like <em>John 3:16</em> or <em>Psalm 23</em> and I'll pull up the passage.
-                </div>
-              </div>
+          <div class="yv-reader">
+            <div class="yv-chapter-label">CHAPTER</div>
+            <div class="yv-chapter-num">3</div>
 
-              <div class="msg user">John 3:16</div>
+            <h3 class="yv-section">Jesus Teaches Nicodemus</h3>
+            <p class="yv-verses">
+              <span class="vn">1</span>Now there was a man of the Pharisees named Nicodemus, a ruler of the Jews.
+              <span class="vn">2</span>He came to Jesus by night and said to him, &ldquo;Rabbi, we know that you are a teacher come from God, for no one can do these signs that you do unless God is with him.&rdquo;
+              <span class="vn">3</span>Jesus answered him, &ldquo;Most certainly I tell you, unless one is born anew, he can&rsquo;t see God&rsquo;s Kingdom.&rdquo;
+              <span class="vn">4</span>Nicodemus said to him, &ldquo;How can a man be born when he is old? Can he enter a second time into his mother&rsquo;s womb and be born?&rdquo;
+              <span class="vn">5</span>Jesus answered, &ldquo;Most certainly I tell you, unless one is born of water and spirit, he can&rsquo;t enter into God&rsquo;s Kingdom.
+              <span class="vn">6</span>That which is born of the flesh is flesh. That which is born of the Spirit is spirit.
+              <span class="vn">7</span>Don&rsquo;t marvel that I said to you, &lsquo;You must be born anew.&rsquo;&rdquo;
+            </p>
 
-              <div class="msg bot">
-                <span class="ref">John 3:16</span>
-                For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life.
-                <span class="translation">— World English Bible</span>
-              </div>
-
-              <div class="msg user">Psalm 23:1-3</div>
-
-              <div class="msg bot">
-                <span class="ref">Psalm 23:1-3</span>
-                <span class="verse-num">1</span>Yahweh is my shepherd: I shall lack nothing.
-                <span class="verse-num">2</span>He makes me lie down in green pastures. He leads me beside still waters.
-                <span class="verse-num">3</span>He restores my soul. He guides me in the paths of righteousness for his name's sake.
-                <span class="translation">— World English Bible</span>
-              </div>
-
-              <div class="quick-refs">
-                <button class="chip" type="button">John 3:16</button>
-                <button class="chip" type="button">Psalm 23</button>
-                <button class="chip" type="button">Genesis 1:1-5</button>
-                <button class="chip" type="button">Romans 8:28</button>
-                <button class="chip" type="button">Proverbs 3:5-6</button>
-              </div>
-            </div>
+            <h3 class="yv-section">For God So Loved the World</h3>
+            <p class="yv-verses">
+              <span class="vn">16</span><span class="hl">For God so loved the world, that he gave his one and only Son, that whoever believes in him should not perish, but have eternal life.</span>
+              <span class="vn">17</span>For God didn&rsquo;t send his Son into the world to judge the world, but that the world should be saved through him.
+            </p>
           </div>
 
-          <div class="panel-input">
-            <div class="input-row">
-              <input
-                type="text"
-                placeholder="Enter a reference (e.g. John 3:16)"
-                autocomplete="off"
-              />
-              <button class="send" type="button" aria-label="send">➤</button>
-            </div>
-            <div class="input-tools">
-              <span>🔗</span><span>☺</span><span>🎤</span>
-            </div>
+          <div class="yv-actionbar">
+            <button class="yv-action" aria-label="audio">▶</button>
+            <button class="yv-action" aria-label="font size"><span class="aa">Aa</span></button>
+            <button class="yv-action" aria-label="bookmark">🔖</button>
+            <button class="yv-action" aria-label="highlight">✎</button>
+            <button class="yv-action" aria-label="share">↗</button>
           </div>
-          <div class="panel-foot">Powered by <span class="brand">bible-api.com</span></div>
         </article>
       </section>
     </main>
